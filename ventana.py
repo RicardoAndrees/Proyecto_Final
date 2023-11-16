@@ -1,33 +1,55 @@
 import pygame
 import sys
 
-#colores
-NEGRO = (0, 0, 0)
-BLANCO = (255, 255, 255)
-VERDE = (0, 255, 0)
-MARRON = (139, 69, 19)
-AZUL = (0, 0, 255)
-
-#ventana
 class InterfazGrafica:
-    def __init__(self, ecosistema):
+    def __init__(self):
         pygame.init()
 
-        self.ecosistema = ecosistema
         self.screen_size = (736, 736)
         self.screen = pygame.display.set_mode(self.screen_size)
         pygame.display.set_caption("Simulador de Ecosistemas")
 
-        self.fondo = pygame.image.load("mapita.jpg") 
+        self.fondo = pygame.image.load("mapita_sn.jpg")
         self.fondo = pygame.transform.scale(self.fondo, self.screen_size)
 
-        self.sprite = Sprite((0, 0), "tigreso.jpg")
+        self.sprite_m9 = pygame.image.load("m9.png")
+
+        self.num_celdas_x = 10
+        self.num_celdas_y = 10
+        self.ancho_celda = self.screen_size[0] // self.num_celdas_x
+        self.alto_celda = self.screen_size[1] // self.num_celdas_y
+
+
+        self.valores_celdas = [[0 for _ in range(self.num_celdas_x)] for _ in range(self.num_celdas_y)]
+        self.posicion_sprite = [0, 0]
 
     def dibujar_ecosistema(self):
         self.screen.blit(self.fondo, (0, 0))
+
+        for i in range(self.num_celdas_x):
+            for j in range(self.num_celdas_y):
+                x = i * self.ancho_celda
+                y = j * self.alto_celda
+
+                pygame.draw.rect(self.screen, (255, 255, 255), (x, y, self.ancho_celda, self.alto_celda), 2)
+        
+        x = self.posicion_sprite[0] * self.ancho_celda
+        y = self.posicion_sprite[1] * self.alto_celda
+        self.screen.blit(self.sprite_m9, (x, y))
     
-    def dibujar_sprite(self, sprite):
-        self.screen.blit(sprite.image, sprite.rect)
+    def actualizar_posicion_sprite(self, direccion):
+        nueva_posicion = list(self.posicion_sprite)
+
+        if direccion == pygame.K_LEFT and nueva_posicion[0] > 0:
+            nueva_posicion[0] -= 1
+        elif direccion == pygame.K_RIGHT and nueva_posicion[0] < self.num_celdas_x - 1:
+            nueva_posicion[0] += 1
+        elif direccion == pygame.K_UP and nueva_posicion[1] > 0:
+            nueva_posicion[1] -= 1
+        elif direccion == pygame.K_DOWN and nueva_posicion[1] < self.num_celdas_y - 1:
+            nueva_posicion[1] += 1
+
+        self.posicion_sprite = nueva_posicion
 
     def ejecutar_interfaz(self):
         while True:
@@ -35,70 +57,16 @@ class InterfazGrafica:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_UP]:
-                self.sprite.move('UP')
-            elif keys[pygame.K_DOWN]:
-                self.sprite.move('DOWN')
-            elif keys[pygame.K_LEFT]:
-                self.sprite.move('LEFT')
-            elif keys[pygame.K_RIGHT]:
-                self.sprite.move('RIGHT')
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                        self.actualizar_posicion_sprite(event.key)
 
             self.dibujar_ecosistema()
-            self.dibujar_sprite(self.sprite)
             pygame.display.flip()
-
-#eventos            
-class MotorEventos:
-    def __init__(self):
-        self.events = []
-
-    def add_event(self, event):
-        pass
-
-    def execute_events(self):
-        pass
-
-class Ecosistema:
-    def __init__(self, rows, cols):
-        self.matriz_espacial = [[None for _ in range(cols)] for _ in range(rows)]
-        self.event_engine = MotorEventos()
-        self.organisms = []
-
-    def populate_ecosystem(self):
-        #colocar organismos iniciales en la matriz_espacial
-        pass
-
-    def run_cycle(self):
-        #ejecutar un ciclo del simulador
-        pass
-
-class Sprite(pygame.sprite.Sprite):
-    def __init__(self, initial_position, image_path):
-        super().__init__()
-        self.image = pygame.image.load(image_path).convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.topleft = initial_position
-        self.speed = 1 
-        self.image.set_colorkey((255, 255, 255))
-
-    def move(self, direction):
-        if direction == 'UP':
-            self.rect.y -= self.speed
-        elif direction == 'DOWN':
-            self.rect.y += self.speed
-        elif direction == 'LEFT':
-            self.rect.x -= self.speed
-        elif direction == 'RIGHT':
-            self.rect.x += self.speed
-
 
 if __name__ == "__main__":
     pygame.init()
-    ecosistema = Ecosistema(rows=10, cols=10)
-    ecosistema.populate_ecosystem()
 
-    interfaz = InterfazGrafica(ecosistema)
+    interfaz = InterfazGrafica()
     interfaz.ejecutar_interfaz()
