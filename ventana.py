@@ -22,10 +22,10 @@ class Organismo:
         nueva_posicion = (self.posicion[0] + dx, self.posicion[1] + dy)
 
         # Verificar que la nueva posición esté dentro de la matriz
-        if 0 <= nueva_posicion[0] < matriz_espacial.filas and 0 <= nueva_posicion[1] < matriz_espacial.columnas:
+        if 0 <= nueva_posicion[0] < len(matriz_espacial) and 0 <= nueva_posicion[1] < len(matriz_espacial[0]):
             # Actualizar la posición del organismo en la matriz
             matriz_espacial.mover_organismo(self, nueva_posicion)
-
+            
     def reproducirse(self, pareja, matriz_espacial):
         # Implementar la lógica de reproducción
         if isinstance(pareja, Organismo) and self.__class__ == pareja.__class__:
@@ -40,9 +40,8 @@ class Organismo:
         # Puedes también simular el proceso de descomposición o liberar energía al entorno, según tus necesidades.
 
     def interactuar_con_entorno(self, ambiente):
-        # Implementar la interacción del organismo con el ambiente
-        # Por ejemplo, ajustar la energía del organismo según el factor abiótico del ambiente
-        self.energia += ambiente.factor_abiotico
+        # Ajustar la energía del organismo según el factor abiótico del ambiente
+        self.energia += self.energia * ambiente.factor_abiotico
         
     def envejecer(self):
         self.vida -= 1
@@ -89,12 +88,12 @@ class Animal(Organismo):
         self.energia += 20  # Ajusta según tus necesidades
 
     def reproducirse(self, pareja, matriz_espacial):
-        # Implementar la lógica de reproducción para animales
-        if isinstance(pareja, Animal) and self.__class__ == pareja.__class__:
-            # Crear un nuevo animal y colocarlo en una posición cercana
+        # Implementar la lógica de reproducción
+        if isinstance(pareja, Organismo) and self.__class__ == pareja.__class__:
+            # Crear un nuevo organismo y colocarlo en una posición cercana
             nueva_posicion = matriz_espacial.encontrar_posicion_disponible(self.posicion)
-            nuevo_animal = self.__class__(especie=self.especie, dieta=self.dieta, posicion=nueva_posicion, vida=50, energia=50, velocidad=5, rol_trofico=self.rol_trofico)
-            matriz_espacial.agregar_organismo(nuevo_animal)
+            nuevo_organismo = self.__class__(nueva_posicion, vida=50, energia=50, velocidad=5)
+            matriz_espacial.agregar_organismo(nuevo_organismo)
             
 class Planta(Organismo):
     def __init__(self, posicion, vida, energia, velocidad):
@@ -157,19 +156,23 @@ class Ambiente:
         # Puedes agregar más lógica según tus necesidades
 
 class Ecosistema:
-    def __init__(self, rows, cols):
-        self.matriz_espacial = [[None for _ in range(cols)] for _ in range(rows)]
+    def __init__(self, rows, cols, ambiente):
+        self.matriz_espacial = MatrizEspacial(filas=rows, columnas=cols)
         self.organisms = []
-        self.ambiente = Ambiente(factor_abiotico=0.5)  # Puedes ajustar el factor abiótico según tus necesidades
+        self.rows = rows
+        self.cols = cols
+        self.ambiente = ambiente 
+        # Otros atributos e inicializaciones que puedas necesitar
 
+    def add_organism(self, organism):
+        self.organisms.append(organism)
+        
     def populate_ecosystem(self):
-        # Colocar organismos iniciales en la matriz_espacial
-        for _ in range(5):
-            x = random.randint(0, len(self.matriz_espacial) - 1)
-            y = random.randint(0, len(self.matriz_espacial[0]) - 1)
+        for _ in range(10):  # Ajusta según tus necesidades
+            x = random.randint(0, len(self.matriz_espacial.matriz) - 1)
+            y = random.randint(0, len(self.matriz_espacial.matriz[0]) - 1)
             nuevo_organismo = Animal(especie="Tigre", dieta="Carnívoro", posicion=(x, y), vida=50, energia=50, velocidad=5, rol_trofico="carnivoro")
-            self.matriz_espacial[x][y] = nuevo_organismo
-            self.organisms.append(nuevo_organismo)
+            self.matriz_espacial.agregar_organismo(nuevo_organismo, x, y)
 
     def run_cycle(self):
         # Ejecutar un ciclo del simulador
@@ -180,8 +183,7 @@ class Ecosistema:
             organismo.envejecer()
             if organismo.esta_vivo():
                 # Interactuar con el entorno
-                organismo.interactuar_con_entorno(ambiente=self.ambiente, matriz_espacial=self.matriz_espacial)
-
+                organismo.interactuar_con_entorno(ambiente=self.ambiente)
                 # Moverse en una dirección aleatoria (puedes personalizar esto)
                 direccion_aleatoria = random.choice([(0, 1), (0, -1), (1, 0), (-1, 0)])
                 organismo.moverse(direccion_aleatoria, matriz_espacial=self.matriz_espacial)
@@ -287,8 +289,8 @@ class InterfazGrafica:
 # Eventos
 class MotorEventos:
     def __init__(self, ecosistema):
-        self.events = []
         self.ecosistema = ecosistema
+        self.events = []
 
     def add_event(self, event):
         self.events.append(event)
@@ -323,7 +325,22 @@ class EventoCambioEstacional:
             # Puedes agregar más lógica aquí según tus necesidades
 
 
+class MatrizEspacial:
+    def __init__(self, filas, columnas):
+        self.matriz = [[None] * columnas for _ in range(filas)]
 
+    def agregar_organismo(self, organismo, x, y):
+        self.matriz[x][y] = organismo
+        
+    def mover_organismo(self, organismo, nueva_posicion):
+        antigua_posicion = organismo.posicion
+        self.matriz[antigua_posicion[0]][antigua_posicion[1]] = None  # Eliminar el organismo de la posición anterior
+        self.matriz[nueva_posicion[0]][nueva_posicion[1]] = organismo  # Colocar el organismo en la nueva posición
+        organismo.posicion = nueva_posicion  #
+        
+    def encontrar_posicion_disponible(self, posicion):
+        # Lógica para encontrar una posición disponible en la matriz
+        pass  # Recuerda reemplazar 'pass' con la implementación real
 
 # Definir un evento específico (por ejemplo, EventoMeteorito)
 # Definir un evento específico (por ejemplo, EventoMeteorito)
@@ -355,30 +372,27 @@ class EventoMeteorito:
 
 # Sprite
 
-            
+# ... (Tu código hasta la clase Ecosistema)
+
 if __name__ == "__main__":
     pygame.init()
     ecosistema = Ecosistema(rows=10, cols=10)
     ecosistema.populate_ecosystem()
-
+    ecosistema.add_organism(Organismo)
     interfaz = InterfazGrafica(ecosistema)
-
+    ambiente = Ambiente()
+    ecosistema.run_cycle()
     # Crear una instancia del MotorEventos y pasar el ecosistema
     motor_eventos = MotorEventos(ecosistema)
 
     # Crear un carnívoro
-# Crear un carnívoro
     carnivoro = Animal(especie="León", dieta="Carnívoro", posicion=(0, 0), vida=50, energia=50, velocidad=5, rol_trofico="carnivoro")
 
-# Crear un herbívoro
+    # Crear un herbívoro
     herbivoro = Animal(especie="Ciervo", dieta="Herbívoro", posicion=(0, 1), vida=50, energia=50, velocidad=5, rol_trofico="herbivoro")
 
-# Crear un omnívoro
+    # Crear un omnívoro
     omnivoro = Animal(especie="Oso", dieta="Omnívoro", posicion=(1, 0), vida=50, energia=50, velocidad=5, rol_trofico="omnivoro")
-
-
-    # Crear una instancia del MotorEventos en algún lugar de tu código principal
-    motor_eventos = MotorEventos(ecosistema)
 
     # Desencadenar un cambio estacional (puedes ajustar la nueva tasa de reproducción según tus necesidades)
     evento_cambio_estacional = EventoCambioEstacional(nueva_tasa_reproduccion=0.1)
@@ -388,5 +402,33 @@ if __name__ == "__main__":
     evento_meteorito = EventoMeteorito(posicion_impacto=(2, 2))
     motor_eventos.add_event(evento_meteorito)
 
-    # Luego, en tu bucle principal, ejecutas los eventos
-    motor_eventos.execute_events()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            ecosistema.organisms[0].moverse((0, -1), ecosistema.matriz_espacial)
+        elif keys[pygame.K_DOWN]:
+            ecosistema.organisms[0].moverse((0, 1), ecosistema.matriz_espacial)
+        elif keys[pygame.K_LEFT]:
+            ecosistema.organisms[0].moverse((-1, 0), ecosistema.matriz_espacial)
+        elif keys[pygame.K_RIGHT]:
+            ecosistema.organisms[0].moverse((1, 0), ecosistema.matriz_espacial)
+
+        # Actualizar el ecosistema
+        ecosistema.run_cycle()
+
+        # Actualizar el meteorito
+        motor_eventos.execute_events()
+
+        # Dibujar el bioma y los organismos
+        interfaz.dibujar_ecosistema()
+
+        # Dibujar el panel de control
+        interfaz.dibujar_panel_control()
+
+        pygame.display.flip()
+        interfaz.clock.tick(10)
