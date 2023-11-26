@@ -55,6 +55,18 @@ class Animal(Organismo):
         self.dieta = dieta
         self.rol_trofico = rol_trofico
 
+        if self.especie == "Tigre":
+            sprite_path = "Tigre.png"
+        elif self.especie == "Elefante":
+            sprite_path = "Elefante.png"
+        elif self.especie == "León":
+            sprite_path = "Leon.png"
+        # Agrega las rutas para las otras especies aquí
+
+        self.sprite = pygame.image.load(sprite_path)
+        self.sprite = pygame.transform.scale(self.sprite, (20, 20))  # Ajustar el tamaño según necesites
+
+
     def cazar(self, presa, matriz_espacial):
         if isinstance(presa, Organismo) and presa != self and presa.vida > 0:
             presa.vida -= 10
@@ -99,9 +111,7 @@ class Planta(Organismo):
         nuevo_organismo = Planta(nueva_posicion, vida=50, energia=50, velocidad=1)
         matriz_espacial.agregar_organismo(nuevo_organismo)
 
-    def reproducirse(self, pareja, matriz_espacial):
-        atributos_adicionales = {}  # Puedes agregar atributos específicos de Planta aquí
-        super().reproducirse(pareja, matriz_espacial, atributos_adicionales)
+    # La función reproducirse no se sobrescribe aquí ya que no agrega ningún comportamiento adicional
 
 class Ambiente:
     def __init__(self, factor_abiotico):
@@ -136,13 +146,14 @@ class Ecosistema:
 
     def dibujar_ecosistema(self, screen):
         for organismo in self.organisms:
-            if isinstance(organismo, Animal):
-                color = (255, 0, 0)  # Rojo para animales
-            else:
-                color = (0, 255, 0)  # Verde para plantas
-
             x, y = organismo.posicion
-            pygame.draw.rect(screen, color, (y * 20, x * 20, 20, 20))  # Dibuja un cuadrado en la posición del organismo
+            if isinstance(organismo, Animal):
+                sprite = organismo.sprite
+            else:
+                sprite = pygame.image.load("arbolito.png")  # Cambia "planta_sprite.png" con tu imagen de planta
+                sprite = pygame.transform.scale(sprite, (20, 20))  # Ajusta el tamaño según necesites
+
+            screen.blit(sprite, (y * 20, x * 20))
 
     def populate_ecosystem(self):
         for _ in range(10):
@@ -249,18 +260,20 @@ def main():
 
     # Crear instancias de animales y plantas y agregarlas al ecosistema
     tigre = Animal(especie="Tigre", dieta="Carnívoro", posicion=(5, 5), vida=50, energia=50, velocidad=5, rol_trofico="carnivoro")
-    planta = Planta(posicion=(10, 10), vida=50, energia=50, velocidad=1)
-
+    elefante = Animal(especie="Elefante", dieta="Herbívoro", posicion=(7, 7), vida=50, energia=50, velocidad=3, rol_trofico="herbivoro")
+    leon = Animal(especie="León", dieta="Carnívoro", posicion=(10, 10), vida=50, energia=50, velocidad=4, rol_trofico="carnivoro")
+   
     ecosistema.add_organism(tigre)
-    ecosistema.add_organism(planta)
+    ecosistema.add_organism(elefante)
+    ecosistema.add_organism(leon)
 
     clock = pygame.time.Clock()
 
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                running = False
             elif event.type == pygame.KEYDOWN:
                 # Aquí puedes agregar lógica para manejar eventos de teclado si es necesario
                 pass
@@ -273,7 +286,10 @@ def main():
         ecosistema.dibujar_ecosistema(screen)
 
         pygame.display.flip()
-        clock.tick(1)  # Ajusta la velocidad de la simulación
+        clock.tick(10)  # Ajusta la velocidad de la simulación
+
+    pygame.quit()
+    sys.exit()
 
 if __name__ == "__main__":
     main()
