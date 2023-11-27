@@ -1,6 +1,8 @@
 import pygame
 import sys
 import random
+from itertools import product
+
 
 NEGRO = (0, 0, 0)
 BLANCO = (255, 255, 255)
@@ -31,7 +33,7 @@ class Organismo:
             'vida': 50,
             'energia': 50,
             'velocidad': 5,
-            **atributos_adicionales  # Agrega atributos adicionales aquí
+            **atributos_adicionales  
         }
         nuevo_organismo = self.__class__(**nuevos_atributos)
         matriz_espacial.agregar_organismo(nuevo_organismo)
@@ -54,17 +56,34 @@ class Animal(Organismo):
         self.especie = especie
         self.dieta = dieta
         self.rol_trofico = rol_trofico
-
+        self.sprite = None
+        
+        sprite_path = None 
+ 
         if self.especie == "Tigre":
             sprite_path = "Tigre.png"
         elif self.especie == "Elefante":
             sprite_path = "Elefante.png"
         elif self.especie == "León":
             sprite_path = "Leon.png"
-        # Agrega las rutas para las otras especies aquí
+        elif self.especie == "Cocodrilo":
+            sprite_path = "Cocodrilo.png"
+        elif self.especie == "Conejo":
+            sprite_path = "Conejo.png"
+        elif self.especie == "Ciervo":
+            sprite_path = "Ciervo.png"
+        elif self.especie == "Cuervo":
+            sprite_path = "Cuervo.png"
+        elif self.especie == "Pez":
+            sprite_path = "Pez.png"
+        elif self.especie == "Tiburon":
+            sprite_path = "Tiburon.png"
+        elif self.especie == "Lagartija":
+            sprite_path = "Lagartija.png"
 
-        self.sprite = pygame.image.load(sprite_path)
-        self.sprite = pygame.transform.scale(self.sprite, (20, 20))  # Ajustar el tamaño según necesites
+        if sprite_path is not None:
+            self.sprite = pygame.image.load(sprite_path)
+            self.sprite = pygame.transform.scale(self.sprite, (20, 20)) 
 
 
     def cazar(self, presa, matriz_espacial):
@@ -111,12 +130,51 @@ class Planta(Organismo):
         nuevo_organismo = Planta(nueva_posicion, vida=50, energia=50, velocidad=1)
         matriz_espacial.agregar_organismo(nuevo_organismo)
 
-    # La función reproducirse no se sobrescribe aquí ya que no agrega ningún comportamiento adicional
-
 class Ambiente:
-    def __init__(self, factor_abiotico):
+    def __init__(self, factor_abiotico, fondo_color=None, fondo_path=None, arbolito_path=None, size=None):
         self.factor_abiotico = factor_abiotico
+        self.fondo_color = fondo_color
+        self.fondo_path = fondo_path
+        self.size = size
+        self.seccion_actual = 0
 
+        if self.size:
+            if self.fondo_color:
+                self.fondo = pygame.Surface(self.size)
+                self.fondo.fill(self.fondo_color)
+            elif self.fondo_path:
+                self.fondo = pygame.image.load(self.fondo_path)
+                self.fondo = pygame.transform.scale(self.fondo, self.size)
+        else:
+            self.fondo = None  
+        self.arbolito_path = arbolito_path
+        self.arbolitos = self.cargar_arbolitos(size)
+    
+
+
+
+    def cargar_arbolitos(self, size):
+        arbolitos = []
+        if self.arbolito_path:
+            arbolito_img = pygame.image.load(self.arbolito_path)
+            arbolito_img = pygame.transform.scale(arbolito_img, (20, 20))  
+            for _ in range(5):  
+                x = random.randint(0, size[0] - 20)
+                y = random.randint(0, size[1] - 20)
+                arbolitos.append((arbolito_img, (x, y)))
+        return arbolitos
+    
+    def dibujar_fondo(self, screen, seccion_actual):
+        seccion_height = self.size[1] // 3
+        seccion_rect = pygame.Rect(0, seccion_actual * seccion_height, self.size[0], seccion_height)
+
+        if self.fondo:
+            screen.blit(self.fondo, (0, seccion_actual * seccion_height), seccion_rect)
+
+        for arbolito_img, (x, y) in self.arbolitos:
+            screen.blit(arbolito_img, (x, y + seccion_actual * seccion_height))
+
+            
     def afectar_ecosistema(self, ecosistema):
         for organismo in ecosistema.organisms:
             organismo.energia += self.factor_abiotico * 10
@@ -134,26 +192,43 @@ class Ambiente:
         self.generar_evento_climatico(ecosistema)
 
 class Ecosistema:
-    def __init__(self, rows, cols, ambiente):
+    def __init__(self, rows, cols, ambientes, size):
         self.matriz_espacial = MatrizEspacial(filas=rows, columnas=cols)
         self.organisms = []
         self.rows = rows
         self.cols = cols
-        self.ambiente = ambiente 
+        self.ambientes = ambientes
+        self.size = size
+        self.seccion_actual = 0
+
 
     def add_organism(self, organism):
         self.organisms.append(organism)
 
-    def dibujar_ecosistema(self, screen):
+    def dibujar_ecosistema(self, screen, seccion_actual):
         for organismo in self.organisms:
             x, y = organismo.posicion
-            if isinstance(organismo, Animal):
+            if isinstance(organismo, Animal) and hasattr(organismo, 'sprite') and organismo.sprite is not None:
                 sprite = organismo.sprite
+                if hasattr(sprite, 'get_size'):
+                    sprite_size = sprite.get_size()
+                    screen.blit(sprite, (y * 20, x * 20 + seccion_actual * self.size[1] // 3))
             else:
-                sprite = pygame.image.load("arbolito.png")  # Cambia "planta_sprite.png" con tu imagen de planta
-                sprite = pygame.transform.scale(sprite, (20, 20))  # Ajusta el tamaño según necesites
+                sprite = pygame.image.load("arbolito.png")
+                sprite = pygame.transform.scale(sprite, (20, 20))
+                screen.blit(sprite, (y * 20, x * 20 + seccion_actual * self.size[1] // 3))
 
-            screen.blit(sprite, (y * 20, x * 20))
+    def dibujar_fondos(self, screen):
+        for seccion_actual in range(3):
+            seccion_height = self.size[1] // 3
+            seccion_rect = pygame.Rect(0, seccion_actual * seccion_height, self.size[0], seccion_height)
+
+            self.ambiente_bosque.dibujar_fondo(screen, seccion_actual)
+            self.ambiente_desierto.dibujar_fondo(screen, seccion_actual)
+            self.ambiente_acuatico.dibujar_fondo(screen, seccion_actual)
+
+            for arbolito_img, (x, y) in self.ambiente_acuatico.arbolitos:
+                screen.blit(arbolito_img, (x, y + seccion_actual * seccion_height))
 
     def populate_ecosystem(self):
         for _ in range(10):
@@ -171,7 +246,7 @@ class Ecosistema:
 
     def run_cycle(self):
         for organismo in self.organisms:
-            organismo.interactuar_con_entorno(self.ambiente)
+            organismo.interactuar_con_entorno(self.ambientes[self.seccion_actual])
             organismo.envejecer()
             organismo.energia -= 1
 
@@ -180,7 +255,6 @@ class Ecosistema:
                 organismo.reproducirse(pareja, self.matriz_espacial)
                 organismo.moverse(self.obtener_direccion(), self.matriz_espacial)
 
-                # Verifica si el organismo es un Animal antes de llamar a interactuar_con_otro_organismo
                 if isinstance(organismo, Animal):
                     organismo.interactuar_con_otro_organismo(self.obtener_objetivo(organismo), self.matriz_espacial)
             else:
@@ -188,6 +262,7 @@ class Ecosistema:
 
         self.matriz_espacial.ciclo_de_vida()
         self.matriz_espacial.ciclo_de_vida()
+        
     def obtener_pareja(self, organismo):
         posibles_parejas = [o for o in self.organisms if isinstance(o, organismo.__class__) and o != organismo]
         return random.choice(posibles_parejas) if posibles_parejas else None
@@ -228,11 +303,15 @@ class MatrizEspacial:
 
     def encontrar_posicion_disponible(self, posicion):
         x, y = posicion
-        posiciones_disponibles = [(x + dx, y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
-        posiciones_disponibles = [(x, y) for x, y in posiciones_disponibles if 0 <= x < len(self.matriz) and 0 <= y < len(self.matriz[0])]
-        posiciones_disponibles = [pos for pos in posiciones_disponibles if self.matriz[pos[0]][pos[1]] is None]
+        posiciones_disponibles = [
+            (x + dx, y + dy) for dx, dy in product([-1, 0, 1], repeat=2) 
+            if 0 <= x + dx < len(self.matriz) and 0 <= y + dy < len(self.matriz[0])
+        ]
+        posiciones_disponibles = [
+            pos for pos in posiciones_disponibles if not isinstance(self.matriz[pos[0]][pos[1]], Organismo)
+        ]
         return random.choice(posiciones_disponibles) if posiciones_disponibles else None
-
+    
     def ciclo_de_vida(self):
         for i in range(self.filas):
             for j in range(self.columnas):
@@ -246,50 +325,70 @@ class MatrizEspacial:
 
                     if isinstance(organismo, Planta) and organismo.energia % 10 == 0:
                         organismo.reproducirse_por_semillas(self)
-# ... (código anterior)
-
+                        
 def main():
-    pygame.init()
-    size = (700, 500)
+    size = (1370, 700)
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("Ecosistema Simulado")
+    
+    bosque_fondo = "mapa.png"
+    arbolito_path = "arbolito.png" 
 
-    ambiente = Ambiente(factor_abiotico=0.1)
-    ecosistema = Ecosistema(rows=20, cols=20, ambiente=ambiente)
+    bosque = Ambiente(factor_abiotico=0.1, fondo_color=(0, 128, 0), arbolito_path=arbolito_path, size=size)
+    desierto = Ambiente(factor_abiotico=0.05, fondo_path="fondo_desierto.png", size=size)
+    acuatico = Ambiente(factor_abiotico=0.15, fondo_color=(0, 0, 255), size=size)
+
+    ambientes = [bosque, desierto, acuatico]
+    ecosistema = Ecosistema(rows=20, cols=20, ambientes=ambientes, size=size)
     ecosistema.populate_ecosystem()
 
-    # Crear instancias de animales y plantas y agregarlas al ecosistema
+    
     tigre = Animal(especie="Tigre", dieta="Carnívoro", posicion=(5, 5), vida=50, energia=50, velocidad=5, rol_trofico="carnivoro")
     elefante = Animal(especie="Elefante", dieta="Herbívoro", posicion=(7, 7), vida=50, energia=50, velocidad=3, rol_trofico="herbivoro")
     leon = Animal(especie="León", dieta="Carnívoro", posicion=(10, 10), vida=50, energia=50, velocidad=4, rol_trofico="carnivoro")
-   
+    cocodrilo = Animal(especie="Cocodrilo", dieta="Carnívoro", posicion=(12, 12), vida=50, energia=50, velocidad=6, rol_trofico="carnivoro")
+    conejo = Animal(especie="Conejo", dieta="Herbívoro", posicion=(15, 15), vida=50, energia=50, velocidad=2, rol_trofico="herbivoro")
+    ciervo = Animal(especie="Ciervo", dieta="Herbívoro", posicion=(3, 3), vida=50, energia=50, velocidad=3, rol_trofico="herbivoro")
+    cuervo = Animal(especie="Cuervo", dieta="Omnívoro", posicion=(8, 8), vida=50, energia=50, velocidad=4, rol_trofico="omnivoro")
+    pez = Animal(especie="Pez", dieta="Herbívoro", posicion=(2, 2), vida=50, energia=50, velocidad=2, rol_trofico="herbivoro")
+    tiburon = Animal(especie="Tiburón", dieta="Carnívoro", posicion=(18, 18), vida=50, energia=50, velocidad=5, rol_trofico="carnivoro")
+    lagartija = Animal(especie="Lagartija", dieta="Herbívoro", posicion=(14, 14), vida=50, energia=50, velocidad=2, rol_trofico="herbivoro")
+
     ecosistema.add_organism(tigre)
     ecosistema.add_organism(elefante)
     ecosistema.add_organism(leon)
+    ecosistema.add_organism(cocodrilo)
+    ecosistema.add_organism(conejo)
+    ecosistema.add_organism(ciervo)
+    ecosistema.add_organism(cuervo)
+    ecosistema.add_organism(pez)
+    ecosistema.add_organism(tiburon)
+    ecosistema.add_organism(lagartija)
 
     clock = pygame.time.Clock()
-
+    seccion_actual = 0
     running = True
+    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN:
-                # Aquí puedes agregar lógica para manejar eventos de teclado si es necesario
-                pass
 
         ecosistema.run_cycle()
-
-        screen.fill(NEGRO)
-
-        # Llama a la función para dibujar el ecosistema
-        ecosistema.dibujar_ecosistema(screen)
+        screen.fill((255, 255, 255))
+    
+        for seccion_actual, ambiente in enumerate(ecosistema.ambientes):
+            ecosistema.dibujar_ecosistema(screen, seccion_actual)
+            ambiente.dibujar_fondo(screen, seccion_actual)
 
         pygame.display.flip()
-        clock.tick(10)  # Ajusta la velocidad de la simulación
+
+        clock.tick(10)
+
 
     pygame.quit()
     sys.exit()
 
+    
 if __name__ == "__main__":
     main()
