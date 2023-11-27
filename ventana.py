@@ -54,7 +54,7 @@ class InterfazGrafica:
                 x = i * self.ancho_celda
                 y = j * self.alto_celda
 
-                pygame.draw.rect(self.screen, (255, 255, 255), (x, y, self.ancho_celda, self.alto_celda), 2)
+                pygame.draw.rect(self.screen, (89, 167, 80,), (x, y, self.ancho_celda, self.alto_celda), 2)
 
         for i in range(self.num_sprites):
             sprite_width, sprite_height = self.sprites[i].get_size()
@@ -76,7 +76,7 @@ class InterfazGrafica:
 
         if not self.hay_sprite_en_celda(nueva_posicion):
             self.sprites_posiciones[indice] = nueva_posicion
-            pygame.time.delay(1000)
+            pygame.time.delay(500)
 
     def ejecutar_interfaz(self):
         while True:
