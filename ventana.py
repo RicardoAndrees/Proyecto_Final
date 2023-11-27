@@ -62,16 +62,9 @@ class InterfazGrafica:
 
                 pygame.draw.rect(self.screen, (89, 167, 80), (x, y, self.ancho_celda, self.alto_celda), 2)
 
-                # Obtener el número de celda como cadena
                 numero_celda = str(j * self.num_celdas_x + i + 1)
-
-                # Renderizar el número en una superficie
                 texto_surface = self.font.render(numero_celda, True, (255, 255, 255))
-
-                # Centrar el número en la celda
                 texto_rect = texto_surface.get_rect(center=(x + self.ancho_celda // 2, y + self.alto_celda // 2))
-
-                # Dibujar el número en la pantalla
                 self.screen.blit(texto_surface, texto_rect)
 
         for i in range(self.num_sprites):
@@ -98,8 +91,8 @@ class InterfazGrafica:
         elif direccion == pygame.K_DOWN and nueva_posicion[1] < self.num_celdas_y - 1:
             nueva_posicion[1] += 1
 
+        
         if not self.hay_sprite_en_celda(nueva_posicion):
-            # Ocupar la nueva celda con el sprite
             self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
             self.sprites_posiciones[indice] = nueva_posicion
             pygame.time.delay(500)
