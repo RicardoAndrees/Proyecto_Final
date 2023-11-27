@@ -20,13 +20,19 @@ class InterfazGrafica:
             pygame.image.load("m9.png")
         ]
 
+        self.font = pygame.font.Font(None, 36)  # Tamaño de la fuente
+
         self.num_celdas_x = 15
         self.num_celdas_y = 15
         self.ancho_celda = self.screen_size[0] // self.num_celdas_x
         self.alto_celda = self.screen_size[1] // self.num_celdas_y
 
         self.num_sprites = len(self.sprites)
-        self.sprites_posiciones = [[random.randint(0, self.num_celdas_x - 1), random.randint(0, self.num_celdas_y - 1)] for _ in range(self.num_sprites)]
+
+        # Matriz que representa las celdas, inicialmente todas vacías
+        self.matriz_celdas = [[None for _ in range(self.num_celdas_x)] for _ in range(self.num_celdas_y)]
+
+        self.sprites_posiciones = [None] * self.num_sprites
         self.sprites_direcciones = [None] * self.num_sprites
         self.tiempo_aleatorio = time.time()
 
@@ -44,7 +50,7 @@ class InterfazGrafica:
             self.actualizar_posicion_sprite(i, self.sprites_direcciones[i])
 
     def hay_sprite_en_celda(self, posicion):
-        return posicion in self.sprites_posiciones
+        return self.matriz_celdas[posicion[1]][posicion[0]] is not None
 
     def dibujar_ecosistema(self):
         self.screen.blit(self.fondo, (0, 0))
@@ -54,7 +60,19 @@ class InterfazGrafica:
                 x = i * self.ancho_celda
                 y = j * self.alto_celda
 
-                pygame.draw.rect(self.screen, (89, 167, 80,), (x, y, self.ancho_celda, self.alto_celda), 2)
+                pygame.draw.rect(self.screen, (89, 167, 80), (x, y, self.ancho_celda, self.alto_celda), 2)
+
+                # Obtener el número de celda como cadena
+                numero_celda = str(j * self.num_celdas_x + i + 1)
+
+                # Renderizar el número en una superficie
+                texto_surface = self.font.render(numero_celda, True, (255, 255, 255))
+
+                # Centrar el número en la celda
+                texto_rect = texto_surface.get_rect(center=(x + self.ancho_celda // 2, y + self.alto_celda // 2))
+
+                # Dibujar el número en la pantalla
+                self.screen.blit(texto_surface, texto_rect)
 
         for i in range(self.num_sprites):
             sprite_width, sprite_height = self.sprites[i].get_size()
@@ -63,7 +81,13 @@ class InterfazGrafica:
             self.screen.blit(self.sprites[i], (x, y))
 
     def actualizar_posicion_sprite(self, indice, direccion):
-        nueva_posicion = list(self.sprites_posiciones[indice])
+        antigua_posicion = self.sprites_posiciones[indice]
+
+        if antigua_posicion is not None:
+            # Liberar la celda ocupada por el sprite anterior
+            self.matriz_celdas[antigua_posicion[1]][antigua_posicion[0]] = None
+
+        nueva_posicion = list(antigua_posicion) if antigua_posicion is not None else [random.randint(0, self.num_celdas_x - 1), random.randint(0, self.num_celdas_y - 1)]
 
         if direccion == pygame.K_LEFT and nueva_posicion[0] > 0:
             nueva_posicion[0] -= 1
@@ -75,6 +99,8 @@ class InterfazGrafica:
             nueva_posicion[1] += 1
 
         if not self.hay_sprite_en_celda(nueva_posicion):
+            # Ocupar la nueva celda con el sprite
+            self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
             self.sprites_posiciones[indice] = nueva_posicion
             pygame.time.delay(500)
 
