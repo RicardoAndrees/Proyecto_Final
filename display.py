@@ -75,10 +75,9 @@ class InterfazGrafica:
             self.tiempo_aleatorio = tiempo_actual
 
         for i in range(self.num_sprites):
-            sprite = self.sprites[i]
-            rango_x_sprite = (0, self.num_celdas_x - 1)
-            rango_y_sprite = (0, self.num_celdas_y - 1)
-            
+            direccion = self.sprites_direcciones[i]
+            self.actualizar_posicion_sprite(i, direccion)
+                
             if i == self.indice_tiburon or i == self.indice_pez:
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
@@ -89,7 +88,6 @@ class InterfazGrafica:
                 self.sprites_direcciones[i] = self.generar_direccion_aleatoria()
                 self.sprites_posiciones[i] = [random.randint(rango_x_sprite[0], rango_x_sprite[1]), random.randint(rango_y_sprite[0], rango_y_sprite[1])]
 
-            self.actualizar_posicion_sprite(i, self.sprites_direcciones[i])
 
     def hay_sprite_en_celda(self, posicion):
         if 0 <= posicion[1] < self.num_celdas_y and 0 <= posicion[0] < self.num_celdas_x:
@@ -128,9 +126,12 @@ class InterfazGrafica:
         nueva_posicion = list(antigua_posicion) if antigua_posicion is not None else [1, 11]
 
         if indice == self.indice_tiburon or indice == self.indice_pez:
+            nueva_posicion[0] += random.choice([-1, 0, 1])
+            nueva_posicion[1] += random.choice([-1, 0, 1])
+
             nueva_posicion[0] = max(self.rango_x_tiburon[0], min(self.rango_x_tiburon[1], nueva_posicion[0]))
             nueva_posicion[1] = max(self.rango_y_tiburon[0], min(self.rango_y_tiburon[1], nueva_posicion[1]))
-        elif 0 <= nueva_posicion[0] < self.num_celdas_x and 0 <= nueva_posicion[1] < self.num_celdas_y:
+        else:
             if direccion == pygame.K_LEFT and self.num_celdas_x > nueva_posicion[0] > 0:
                 nueva_posicion[0] -= 1
             elif direccion == pygame.K_RIGHT and self.num_celdas_x > nueva_posicion[0] < self.num_celdas_x - 1:
@@ -140,10 +141,10 @@ class InterfazGrafica:
             elif direccion == pygame.K_DOWN and self.num_celdas_y > nueva_posicion[1] < self.num_celdas_y - 1:
                 nueva_posicion[1] += 1
 
-            if 0 <= nueva_posicion[0] < self.num_celdas_x and 0 <= nueva_posicion[1] < self.num_celdas_y:
-                if not self.hay_sprite_en_celda(nueva_posicion):
-                    self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
-                    self.sprites_posiciones[indice] = nueva_posicion
+        if 0 <= nueva_posicion[0] < self.num_celdas_x and 0 <= nueva_posicion[1] < self.num_celdas_y:
+            if not self.hay_sprite_en_celda(nueva_posicion):
+                self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
+                self.sprites_posiciones[indice] = nueva_posicion
 
     def ejecutar_interfaz(self):
         while True:
