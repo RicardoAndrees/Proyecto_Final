@@ -58,11 +58,13 @@ class InterfazGrafica:
 
         self.sprites_direcciones = [None] * self.num_sprites
         self.tiempo_aleatorio = time.time()
+        self.clock = pygame.time.Clock()
 
     def generar_direccion_aleatoria(self):
         return random.choice([pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN])
 
     def mover_sprites_aleatoriamente(self):
+        self.clock.tick(1) 
         tiempo_actual = time.time()
 
         rango_x_sprite = (0, self.num_celdas_x - 1)  
