@@ -2,8 +2,6 @@ import pygame
 import sys
 import random
 import time
-from organismo import Organismo
-from animal import Animal
 
 class InterfazGrafica:
     def __init__(self):
@@ -42,19 +40,10 @@ class InterfazGrafica:
 
         self.indice_tiburon = 7
         self.indice_pez = 9
-
-        velocidad_tiburon = 2
-        velocidad_pez = 1
-
-        self.sprites_posiciones[self.indice_tiburon] = [1, 11]
-        self.rango_x_tiburon = (1, 5)
-        self.rango_y_tiburon = (11, 14)
-        self.sprites[self.indice_tiburon] = Animal("Tiburon", "Carnivoro", [1, 11], 100, 100, velocidad_tiburon)
-
-        self.sprites_posiciones[self.indice_pez] = [2, 11]
-        self.rango_x_pez = (2, 6)
-        self.rango_y_pez = (11, 14)
-        self.sprites[self.indice_pez] = Animal("Pez", "Herbivoro", [2, 11], 50, 50, velocidad_pez)
+        self.sprites_posiciones = [None] * self.num_sprites
+        self.sprites_posiciones[self.indice_tiburon] = [1, 11] 
+        self.rango_x_tiburon = (1, 5) 
+        self.rango_y_tiburon = (11, 14) 
 
         for i in range(self.num_sprites):
             if self.sprites_posiciones[i] is None:
@@ -69,7 +58,7 @@ class InterfazGrafica:
     def mover_sprites_aleatoriamente(self):
         tiempo_actual = time.time()
 
-        rango_x_sprite = (0, self.num_celdas_x - 1)
+        rango_x_sprite = (0, self.num_celdas_x - 1)  
         rango_y_sprite = (0, self.num_celdas_y - 1)
 
         if tiempo_actual - self.tiempo_aleatorio > 1:
@@ -78,24 +67,22 @@ class InterfazGrafica:
 
         for i in range(self.num_sprites):
             sprite = self.sprites[i]
+            rango_x_sprite = (166, 170) + (181, 186) + (196, 201) + (211, 216)
+            rango_y_sprite = (11, 14)
+            
+            if i == 7 or i == 9: 
 
-            if i == self.indice_tiburon:
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
-            elif i == self.indice_pez:
-                rango_x_sprite = self.rango_x_pez
-                rango_y_sprite = self.rango_y_pez
 
             posicion = self.sprites_posiciones[i]
             if not (rango_x_sprite[0] <= posicion[0] <= rango_x_sprite[1] and
                     rango_y_sprite[0] <= posicion[1] <= rango_y_sprite[1]):
                 self.sprites_direcciones[i] = self.generar_direccion_aleatoria()
-                velocidad = self.sprites[i].velocidad
-                # Actualizar la posición según la velocidad del animal
-                for _ in range(velocidad):
-                    self.actualizar_posicion_sprite(i, self.sprites_direcciones[i])
+                self.sprites_posiciones[i] = [random.randint(rango_x_sprite[0], rango_x_sprite[1]), random.randint(rango_y_sprite[0], rango_y_sprite[1])]
 
-        self.tiempo_aleatorio = tiempo_actual  # Mover la actualización del tiempo al final
+                
+            self.actualizar_posicion_sprite(i, self.sprites_direcciones[i])
             
     def hay_sprite_en_celda(self, posicion):
         if 0 <= posicion[1] < self.num_celdas_y and 0 <= posicion[0] < self.num_celdas_x:
