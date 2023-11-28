@@ -22,7 +22,9 @@ class InterfazGrafica:
             pygame.image.load("Conejo.png"),
             pygame.image.load("Elefante.png"),
             pygame.image.load("Cuervo.png"),
-            pygame.image.load("Tiburon.png")
+            pygame.image.load("Tiburon.png"),
+            pygame.image.load("Tigre.png"),
+            pygame.image.load("Pez.png")
         ]
 
         self.font = pygame.font.Font(None, 36)  # Tamaño de la fuente
@@ -37,7 +39,16 @@ class InterfazGrafica:
         # Matriz que representa las celdas, inicialmente todas vacías
         self.matriz_celdas = [[None for _ in range(self.num_celdas_x)] for _ in range(self.num_celdas_y)]
 
+        self.indice_tiburon = 7  # El índice del tiburón en la lista de sprites
         self.sprites_posiciones = [None] * self.num_sprites
+        self.sprites_posiciones[self.indice_tiburon] = [1, 11] # Posición inicial del tiburón
+        self.rango_x_tiburon = (1, 5)  # Rango permitido para la coordenada x del tiburón
+        self.rango_y_tiburon = (11, 14)  # Rango permitido para la coordenada y del tiburón 
+
+        for i in range(self.num_sprites):
+            if self.sprites_posiciones[i] is None:
+                self.sprites_posiciones[i] = [random.randint(0, self.num_celdas_x - 1), random.randint(0, self.num_celdas_y - 1)]
+
         self.sprites_direcciones = [None] * self.num_sprites
         self.tiempo_aleatorio = time.time()
 
@@ -48,11 +59,29 @@ class InterfazGrafica:
         tiempo_actual = time.time()
 
         if tiempo_actual - self.tiempo_aleatorio > 1:
+            # Asignar una dirección aleatoria a cada sprite
             self.sprites_direcciones = [self.generar_direccion_aleatoria() for _ in range(self.num_sprites)]
             self.tiempo_aleatorio = tiempo_actual
 
         for i in range(self.num_sprites):
+            sprite = self.sprites[i]
+
+            # Comprobar si el sprite es un tiburón
+            if sprite == "Tiburon.png":
+                # Obtener los rangos permitidos para el tiburón
+                rango_x_tiburon = (166, 170) + (181, 186) + (196, 201) + (211, 216)
+                rango_y_tiburon = (11, 14)
+
+                # Comprobar si el sprite está dentro de los rangos permitidos
+                posicion = self.sprites_posiciones[i]
+                if not (rango_x_tiburon[0] <= posicion[0] <= rango_x_tiburon[1] and
+                        rango_y_tiburon[0] <= posicion[1] <= rango_y_tiburon[1]):
+                    # Si no está, asignarle una dirección aleatoria y posición inicial
+                    self.sprites_direcciones[i] = self.generar_direccion_aleatoria()
+                    self.sprites_posiciones[i] = [random.randint(*rango_x_tiburon), random.randint(*rango_y_tiburon)]
+
             self.actualizar_posicion_sprite(i, self.sprites_direcciones[i])
+
 
     def hay_sprite_en_celda(self, posicion):
         return self.matriz_celdas[posicion[1]][posicion[0]] is not None
@@ -85,21 +114,25 @@ class InterfazGrafica:
             # Liberar la celda ocupada por el sprite anterior
             self.matriz_celdas[antigua_posicion[1]][antigua_posicion[0]] = None
 
-        nueva_posicion = list(antigua_posicion) if antigua_posicion is not None else [random.randint(0, self.num_celdas_x - 1), random.randint(0, self.num_celdas_y - 1)]
+        nueva_posicion = list(antigua_posicion) if antigua_posicion is not None else [1, 11]  # Posición inicial del tiburón
 
-        if direccion == pygame.K_LEFT and nueva_posicion[0] > 0:
+        if direccion == pygame.K_LEFT and self.num_celdas_x > nueva_posicion[0] > 0:
             nueva_posicion[0] -= 1
-        elif direccion == pygame.K_RIGHT and nueva_posicion[0] < self.num_celdas_x - 1:
+        elif direccion == pygame.K_RIGHT and self.num_celdas_x > nueva_posicion[0] < self.num_celdas_x - 1:
             nueva_posicion[0] += 1
-        elif direccion == pygame.K_UP and nueva_posicion[1] > 0:
+        elif direccion == pygame.K_UP and self.num_celdas_y > nueva_posicion[1] > 0:
             nueva_posicion[1] -= 1
-        elif direccion == pygame.K_DOWN and nueva_posicion[1] < self.num_celdas_y - 1:
+        elif direccion == pygame.K_DOWN and self.num_celdas_y > nueva_posicion[1] < self.num_celdas_y - 1:
             nueva_posicion[1] += 1
-    
+
+        if indice == self.indice_tiburon:
+            nueva_posicion[0] = max(self.rango_x_tiburon[0], min(self.rango_x_tiburon[1], nueva_posicion[0]))
+            nueva_posicion[1] = max(self.rango_y_tiburon[0], min(self.rango_y_tiburon[1], nueva_posicion[1]))
+
         if not self.hay_sprite_en_celda(nueva_posicion):
             self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
             self.sprites_posiciones[indice] = nueva_posicion
-            pygame.time.delay(500)
+            pygame.time.delay(150)
 
     def ejecutar_interfaz(self):
         while True:
