@@ -15,9 +15,14 @@ class InterfazGrafica:
         self.fondo = pygame.transform.scale(self.fondo, self.screen_size)
 
         self.sprites = [
-            pygame.image.load("m9.png"),
+            pygame.image.load("Lagartija.png"),
             pygame.image.load("leon.png"),
-            pygame.image.load("m9.png")
+            pygame.image.load("Cocodrilo.png"),
+            pygame.image.load("Ciervo.png"),
+            pygame.image.load("Conejo.png"),
+            pygame.image.load("Elefante.png"),
+            pygame.image.load("Cuervo.png"),
+            pygame.image.load("Tiburon.png")
         ]
 
         self.font = pygame.font.Font(None, 36)  # Tamaño de la fuente
