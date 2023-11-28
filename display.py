@@ -138,7 +138,10 @@ class InterfazGrafica:
             if not self.hay_sprite_en_celda(nueva_posicion):
                 self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
                 self.sprites_posiciones[indice] = nueva_posicion
+<<<<<<< HEAD
                 pygame.time.delay(150)
+=======
+>>>>>>> 72fc0b4f2ee6d76d1aa31b827dd4ac5c8c92f655
 
 
     def ejecutar_interfaz(self):
