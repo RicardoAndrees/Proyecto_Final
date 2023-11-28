@@ -2,9 +2,9 @@ import pygame
 import sys
 import random
 import time
-
+from matriz_espacial import MatrizEspacial
 class InterfazGrafica:
-    def __init__(self):
+    def __init__(self, matriz_espacial):
         pygame.init()
 
         self.screen_size = (736, 736)
@@ -13,7 +13,7 @@ class InterfazGrafica:
 
         self.fondo = pygame.image.load("mapita_sn.jpg")
         self.fondo = pygame.transform.scale(self.fondo, self.screen_size)
-
+        self.matriz_espacial = matriz_espacial
         self.sprites = [
             pygame.image.load("Lagartija.png"),
             pygame.image.load("leon.png"),
@@ -99,7 +99,7 @@ class InterfazGrafica:
         if not self.hay_sprite_en_celda(nueva_posicion):
             self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
             self.sprites_posiciones[indice] = nueva_posicion
-            pygame.time.delay(500)
+            pygame.time.delay(50)
 
     def ejecutar_interfaz(self):
         while True:
