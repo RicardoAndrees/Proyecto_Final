@@ -49,24 +49,32 @@ class InterfazGrafica:
         self.indice_pez = 9
         self.indice_ciervo = 10
         
+        self.rango_x_leon = (0, self.num_celdas_x - 1)
+        self.rango_y_leon = (self.num_celdas_y // 2, self.num_celdas_y - 1)
+        
         self.sprites_posiciones = [None] * self.num_sprites
+        
         self.sprites_posiciones[self.indice_tiburon] = [1, 11] 
         self.rango_x_tiburon = (1, 5) 
         self.rango_y_tiburon = (11, 14) 
         self.rango_x_pez = (2, 6)
         self.rango_y_pez = (11, 14)
 
+        
+        self.sprites_posiciones[self.indice_leon] = [random.randint(self.rango_x_leon[0], self.rango_x_leon[1]),
+                                                     random.randint(self.rango_y_leon[0], self.rango_y_leon[1])]
 
         for i in range(self.num_sprites):
             sprite = self.sprites[i]
             rango_x_sprite = (0, self.num_celdas_x - 1)
             rango_y_sprite = (0, self.num_celdas_y - 1)
-            
+
             if i == self.indice_tiburon or i == self.indice_pez:
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
 
-            self.sprites_posiciones[i] = [random.randint(rango_x_sprite[0], rango_x_sprite[1]), random.randint(rango_y_sprite[0], rango_y_sprite[1])]
+            self.sprites_posiciones[i] = [random.randint(rango_x_sprite[0], rango_x_sprite[1]),
+                                           random.randint(rango_y_sprite[0], rango_y_sprite[1])]
 
         self.sprites_direcciones = [None] * self.num_sprites
         self.tiempo_aleatorio = time.time()
@@ -92,17 +100,16 @@ class InterfazGrafica:
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
             elif i in [self.indice_lagartija, self.indice_leon, self.indice_tigre, self.indice_elefante, self.indice_ciervo, self.indice_conejo]:
-                # Limites para los animales león, tigre, lagartija, conejo, elefante y ciervo
-                rango_x_sprite = (151, 218)
-                rango_y_sprite = (0, self.num_celdas_y // 2 - 1)
+                rango_x_sprite = self.rango_x_leon
+                rango_y_sprite = self.rango_y_leon
 
-            self.actualizar_posicion_sprite(i, direccion)
+            self.actualizar_posicion_sprite(i, direccion, rango_x_sprite, rango_y_sprite)
+
 
             posicion = self.sprites_posiciones[i]
 
             if not (rango_x_sprite[0] <= posicion[0] <= rango_x_sprite[1] and
                     rango_y_sprite[0] <= posicion[1] <= rango_y_sprite[1]):
-                # Ajustar la posición si está fuera de los límites
                 nueva_posicion = [posicion[0] % self.num_celdas_x, posicion[1] % self.num_celdas_y]
                 self.sprites_posiciones[i] = nueva_posicion
                 self.matriz_celdas[posicion[1]][posicion[0]] = None
@@ -136,7 +143,9 @@ class InterfazGrafica:
             
             self.screen.blit(self.sprites[i], (x, y))
 
-    def actualizar_posicion_sprite(self, indice, direccion):
+# ...
+
+    def actualizar_posicion_sprite(self, indice, direccion, rango_x_sprite, rango_y_sprite):
         antigua_posicion = self.sprites_posiciones[indice].copy()
 
         if antigua_posicion is not None and 0 <= antigua_posicion[1] < self.num_celdas_y and 0 <= antigua_posicion[0] < self.num_celdas_x:
@@ -148,22 +157,27 @@ class InterfazGrafica:
             nueva_posicion[0] += random.choice([-1, 0, 1])
             nueva_posicion[1] += random.choice([-1, 0, 1])
 
-            nueva_posicion[0] = max(self.rango_x_tiburon[0], min(self.rango_x_tiburon[1], nueva_posicion[0]))
-            nueva_posicion[1] = max(self.rango_y_tiburon[0], min(self.rango_y_tiburon[1], nueva_posicion[1]))
+            nueva_posicion[0] = max(rango_x_sprite[0], min(rango_x_sprite[1], nueva_posicion[0]))
+            nueva_posicion[1] = max(rango_y_sprite[0], min(rango_y_sprite[1], nueva_posicion[1]))
         else:
             if direccion == pygame.K_LEFT:
-                nueva_posicion[0] = max(0, nueva_posicion[0] - 1)
+                nueva_posicion[0] = max(rango_x_sprite[0], nueva_posicion[0] - 1)
             elif direccion == pygame.K_RIGHT:
-                nueva_posicion[0] = min(self.num_celdas_x - 1, nueva_posicion[0] + 1)
+                nueva_posicion[0] = min(rango_x_sprite[1], nueva_posicion[0] + 1)
             elif direccion == pygame.K_UP:
-                nueva_posicion[1] = max(0, nueva_posicion[1] - 1)
+                nueva_posicion[1] = max(rango_y_sprite[0], nueva_posicion[1] - 1)
             elif direccion == pygame.K_DOWN:
-                nueva_posicion[1] = min(self.num_celdas_y - 1, nueva_posicion[1] + 1)
+                nueva_posicion[1] = min(rango_y_sprite[1], nueva_posicion[1] + 1)
+
+        # Asegurarse de que el león solo se mueva en las dos primeras líneas (y=0 o y=1)
+        nueva_posicion[1] = min(nueva_posicion[1], 1)
 
         if 0 <= nueva_posicion[1] < self.num_celdas_y and 0 <= nueva_posicion[0] < self.num_celdas_x:
             if not self.hay_sprite_en_celda(nueva_posicion) and nueva_posicion != antigua_posicion:
                 self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
                 self.sprites_posiciones[indice] = nueva_posicion
+# ...
+
 
     def ejecutar_interfaz(self):
         while True:
@@ -181,4 +195,3 @@ if __name__ == "__main__":
 
     interfaz = InterfazGrafica()
     interfaz.ejecutar_interfaz()
-    pygame.time.delay(150)
