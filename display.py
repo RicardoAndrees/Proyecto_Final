@@ -7,11 +7,11 @@ class InterfazGrafica:
     def __init__(self):
         pygame.init()
 
-        self.screen_size = (736, 736)
+        self.screen_size = (1340, 736)
         self.screen = pygame.display.set_mode(self.screen_size)
         pygame.display.set_caption("Simulador de Ecosistemas")
 
-        self.fondo = pygame.image.load("mapita_sn.jpg")
+        self.fondo = pygame.image.load("mapita_2.png")
         self.fondo = pygame.transform.scale(self.fondo, self.screen_size)
 
         self.sprites = [
