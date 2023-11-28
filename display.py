@@ -39,7 +39,7 @@ class InterfazGrafica:
         self.matriz_celdas = [[None for _ in range(self.num_celdas_x)] for _ in range(self.num_celdas_y)]
 
         self.indice_tiburon = 7
-        self.indice_pez = 8
+        self.indice_pez = 9
         self.sprites_posiciones = [None] * self.num_sprites
         self.sprites_posiciones[self.indice_tiburon] = [1, 11] 
         self.rango_x_tiburon = (1, 5) 
@@ -70,7 +70,7 @@ class InterfazGrafica:
             rango_x_sprite = (166, 170) + (181, 186) + (196, 201) + (211, 216)
             rango_y_sprite = (11, 14)
             
-            if i == 8 or i == 7: 
+            if i == 7 or i == 9: 
 
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
@@ -138,7 +138,7 @@ class InterfazGrafica:
             if not self.hay_sprite_en_celda(nueva_posicion):
                 self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = indice
                 self.sprites_posiciones[indice] = nueva_posicion
-                pygame.time.delay(150)
+                pygame.time.delay(450)
 
 
     def ejecutar_interfaz(self):
