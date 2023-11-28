@@ -1,4 +1,3 @@
-# matriz_espacial.py
 from itertools import product
 
 class MatrizEspacial:

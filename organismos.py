@@ -1,4 +1,3 @@
-# organismos.py
 import pygame
 from itertools import product
 
@@ -104,11 +103,11 @@ class Animal(Organismo):
             pareja is not None and
             isinstance(pareja, Animal) and
             pareja.esta_vivo() and
-            pareja.especie == self.especie  # Solo se reproducen animales de la misma especie
+            pareja.especie == self.especie 
         ):
             distancia_entre_animales = self.calcular_distancia(self.posicion, pareja.posicion)
 
-            if distancia_entre_animales <= 1:  # Solo se reproducen si están adyacentes
+            if distancia_entre_animales <= 1:  
                 atributos_adicionales = {
                     'especie': self.especie,
                     'dieta': self.dieta,
@@ -131,17 +130,16 @@ class Animal(Organismo):
             direccion = (planta_cercana.posicion[0] - self.posicion[0], planta_cercana.posicion[1] - self.posicion[1])
             self.moverse(direccion, matriz_espacial)
     def tomar_decision(self, matriz_espacial):
-        # Tomar decisiones basadas en el entorno
+
         if self.energia < 30:
-            # Si la energía es baja, buscar un recurso
+
             self.buscar_recurso(matriz_espacial)
         else:
-            # Si la energía es suficiente, intentar reproducirse
+
             pareja = self.obtener_pareja()
             if pareja:
                 self.reproducirse(pareja, matriz_espacial)
 
-# Agregar esta función a la clase Animal
     def tomar_decision_avanzada(self, ecosistema):
         if hasattr(ecosistema, 'matriz_espacial') and ecosistema.matriz_espacial:
             for otro_organismo in ecosistema.matriz_espacial.organisms:

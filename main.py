@@ -1,4 +1,3 @@
-# main.py
 import pygame
 import sys
 from ecosistema import Ecosistema
@@ -13,8 +12,7 @@ def main():
     bosque_fondo = "mapa.png"
     arbolito_path = "arbolito.png"
 
-    # Crear instancias de Ambiente
-    bosque = Ambiente(factor_abiotico=0.1, fondo_path="bosque.png", size=size)
+    bosque = Ambiente(factor_abiotico=0.1, fondo_path="pasto.png", size=size)
     desierto = Ambiente(factor_abiotico=0.05, fondo_path="fondo_desierto.png", size=size)
     acuatico = Ambiente(factor_abiotico=0.15, fondo_color=(0, 0, 255), size=size)
 
@@ -22,7 +20,6 @@ def main():
     ecosistema = Ecosistema(rows=20, cols=20, ambientes=ambientes, size=size)
     ecosistema.populate_ecosystem()
 
-    # Crear instancias de Organismos y agregarlos al ecosistema
     tigre = Animal(especie="Tigre", dieta="Carnívoro", posicion=(5, 5), vida=50, energia=50, velocidad=5, rol_trofico="carnivoro")
     elefante = Animal(especie="Elefante", dieta="Herbívoro", posicion=(7, 7), vida=50, energia=50, velocidad=3, rol_trofico="herbivoro")
     leon = Animal(especie="León", dieta="Carnívoro", posicion=(10, 10), vida=50, energia=50, velocidad=4, rol_trofico="carnivoro")

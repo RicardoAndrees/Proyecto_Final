@@ -35,13 +35,12 @@ class Ecosistema:
             seccion_height = self.size[1] // 3
             seccion_rect = pygame.Rect(0, seccion_actual * seccion_height, self.size[0], seccion_height)
             
-            if seccion_actual == 0:  # Primera sección
+            if seccion_actual == 0: 
                 ambiente.dibujar_fondo(screen, seccion_actual, seccion_rect)
-            else:  # Segunda y tercera sección
+            else: 
                 if seccion_actual == 1:
                     ambiente.dibujar_fondo(screen, seccion_actual, seccion_rect)
                 elif seccion_actual == 2:
-                    # Ajusta el rectángulo para dividir en dos a lo ancho
                     seccion_rect_left = pygame.Rect(0, seccion_actual * seccion_height, self.size[0] // 2, seccion_height)
                     ambiente.dibujar_fondo(screen, seccion_actual, seccion_rect_left)
                     

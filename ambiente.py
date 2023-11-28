@@ -50,14 +50,13 @@ class Ambiente:
         return arbolitos
 
     def dibujar_fondo(self, screen, seccion_actual, seccion_rect):
-        if seccion_actual == 0:  # Primera sección
+        if seccion_actual == 0:
             if self.fondo_top:
                 screen.blit(self.fondo_top, (0, seccion_actual * seccion_rect.height))
-        else:  # Segunda y tercera sección
+        else:
             if seccion_actual == 1:
                 screen.blit(self.fondo_left, (0, seccion_actual * seccion_rect.height))
             elif seccion_actual == 2:
-                # Ajusta el rectángulo para dividir en dos a lo alto
                 seccion_rect_bottom = pygame.Rect(0, seccion_actual * seccion_rect.height + seccion_rect.height // 2, self.size[0], seccion_rect.height // 2)
                 screen.blit(self.fondo_left, (0, seccion_actual * seccion_rect.height))
                 screen.blit(self.fondo_right, (self.size[0] // 2, seccion_actual * seccion_rect.height + seccion_rect.height // 2))
