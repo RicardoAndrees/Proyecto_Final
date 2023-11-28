@@ -44,6 +44,9 @@ class InterfazGrafica:
         self.sprites_posiciones[self.indice_tiburon] = [1, 11] 
         self.rango_x_tiburon = (1, 5) 
         self.rango_y_tiburon = (11, 14) 
+        self.rango_x_pez = (2, 6)
+        self.rango_y_pez = (11, 14)
+
 
         for i in range(self.num_sprites):
             if self.sprites_posiciones[i] is None:
@@ -58,9 +61,6 @@ class InterfazGrafica:
     def mover_sprites_aleatoriamente(self):
         tiempo_actual = time.time()
 
-        rango_x_sprite = (0, self.num_celdas_x - 1)  
-        rango_y_sprite = (0, self.num_celdas_y - 1)
-
         if tiempo_actual - self.tiempo_aleatorio > 1:
             self.sprites_direcciones = [self.generar_direccion_aleatoria() for _ in range(self.num_sprites)]
             self.tiempo_aleatorio = tiempo_actual
@@ -70,12 +70,15 @@ class InterfazGrafica:
             rango_x_sprite = (166, 170) + (181, 186) + (196, 201) + (211, 216)
             rango_y_sprite = (11, 14)
             
-            if i == 7 or i == 9: 
-
+            if i == 7:  # Tiburón
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
+            elif i == 9:  # Pez
+                rango_x_sprite = self.rango_x_pez
+                rango_y_sprite = self.rango_y_pez
 
             posicion = self.sprites_posiciones[i]
+
             if not (rango_x_sprite[0] <= posicion[0] <= rango_x_sprite[1] and
                     rango_y_sprite[0] <= posicion[1] <= rango_y_sprite[1]):
                 self.sprites_direcciones[i] = self.generar_direccion_aleatoria()
@@ -156,3 +159,4 @@ if __name__ == "__main__":
 
     interfaz = InterfazGrafica()
     interfaz.ejecutar_interfaz()
+    pygame.time.delay(150)
