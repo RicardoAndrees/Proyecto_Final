@@ -11,8 +11,15 @@ def main():
 
     tiburon = Animal(posicion=[1, 11], vida=100, energia=50, velocidad=1, especie="Tiburón", dieta="Peces", imagen_path="tiburon.png")
     pez = Animal(posicion=[5, 13], vida=80, energia=40, velocidad=1, especie="Pez", dieta="Algas", imagen_path="pez.png")
+    
+    matriz_celda_size = (50, 50) 
+    girasol = Planta(posicion=[3, 5], vida=50, energia=30, imagen_path="girasol.png", matriz_celda_size=matriz_celda_size)
 
-    organismos = [tiburon, pez]
+    arbolito = Planta(posicion=[8, 10], vida=60, energia=40, imagen_path="arbolito.png", matriz_celda_size=matriz_celda_size)
+
+
+
+    organismos = [tiburon, pez, girasol, arbolito]
     matriz_celdas = [[None for _ in range(15)] for _ in range(15)]  
     
     num_filas = 10
