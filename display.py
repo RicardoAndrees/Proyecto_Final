@@ -49,7 +49,7 @@ class InterfazGrafica:
         self.indice_pez = 9
         self.indice_ciervo = 10
         
-        self.rango_x_general = (9, 15)  # Define un rango general para el eje x
+        self.rango_x_general = (0, 15)  # Define un rango general para el eje x
         self.rango_y_general = (0, self.num_celdas_y - 1)  # Define un rango general para el eje y
 
         self.sprites_posiciones = [None] * self.num_sprites
@@ -119,12 +119,12 @@ class InterfazGrafica:
                 x = i * self.ancho_celda
                 y = j * self.alto_celda
 
-                pygame.draw.rect(self.screen, (89, 167, 80), (x, y, self.ancho_celda, self.alto_celda), 2)
+                #pygame.draw.rect(self.screen, (89, 167, 80), (x, y, self.ancho_celda, self.alto_celda), 2)#########################################
 
                 numero_celda = str(j * self.num_celdas_x + i + 1)
                 texto_surface = self.font.render(numero_celda, True, (255, 255, 255))
                 texto_rect = texto_surface.get_rect(center=(x + self.ancho_celda // 2, y + self.alto_celda // 2))
-                self.screen.blit(texto_surface, texto_rect)
+                #self.screen.blit(texto_surface, texto_rect)
 
         for i in range(self.num_sprites):
             sprite_width, sprite_height = self.sprites[i].get_size()
