@@ -89,6 +89,20 @@ class Animal(Organismo):
 
 
 class Planta(Organismo):
+    def __init__(self, posicion, vida, energia, velocidad, imagen_path):
+        self.posicion = posicion
+        self.vida = vida
+        self.energia = energia
+        self.velocidad = velocidad
+
+        self.sprite = pygame.image.load(imagen_path)
+        self.sprite_width, self.sprite_height = self.sprite.get_size()
+
+    def dibujar(self, screen, ancho_celda, alto_celda):
+        x = self.posicion[0] * ancho_celda + (ancho_celda - self.sprite_width) // 2
+        y = self.posicion[1] * alto_celda + (alto_celda - self.sprite_height) // 2
+
+        screen.blit(self.sprite, (x, y))
 
 
     def fotosintesis(self):
