@@ -134,7 +134,7 @@ class InterfazGrafica:
                 numero_celda = str(j * self.num_celdas_x + i + 1)
                 texto_surface = self.font.render(numero_celda, True, (255, 255, 255))
                 texto_rect = texto_surface.get_rect(center=(x + self.ancho_celda // 2, y + self.alto_celda // 2))
-                self.screen.blit(texto_surface, texto_rect)
+                #self.screen.blit(texto_surface, texto_rect)
 
         for i in range(self.num_sprites):
             sprite_width, sprite_height = self.sprites[i].get_size()
