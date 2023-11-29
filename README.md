@@ -1,5 +1,6 @@
 # Proyecto_Final
-Simulador de Ecosistemas
+Simulador de Ecosistemas.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Este código en Python utiliza la biblioteca Pygame para simular un ecosistema.
 el código establece las bases para simular un ecosistema con organismos (animales y plantas) en una matriz espacial, representando visualmente la simulación.
 Se importan las bibliotecas necesarias, incluyendo Pygame para manejar la interfaz gráfica y varios módulos propios que estan relacionados con la representación y simulación del ecosistema
@@ -55,9 +56,57 @@ La función obtener_direccion devuelve una dirección aleatoria entre arriba, ab
 este código define un entorno de simulación donde los organismos (tigres y plantas) interactúan con su entorno y entre ellos en un ciclo de simulación continuo. 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Matriz Espacial
 
+El metodo de inicialización crea una matriz bidimensional de tamaño filas x columnas e inicializa todas las celdas con None. Esta matriz se utilizará para representar el espacio espacial donde los organismos interactúan.
 
+El metodo agregar organismo, agrega un organismo a la matriz en la posición correspondiente según las coordenadas del organismo.
 
+Seguido de este metodo esta paara eliminar el organismo
+
+Mover oganismo mueve un organismo desde su posición actual a una nueva posición en la matriz. Actualiza las entradas de la matriz para reflejar el cambio de posición del organismo.
+
+obtener organismo: Dada una posición en la matriz, devuelve el organismo presente en esa posición.
+
+El metodo encontrar posicion busca una posición adyacente disponible a la posición inicial dada. Luego, verifica si las nuevas coordenadas están dentro de los límites de la matriz y si la celda está vacía. Si encuentra una posición disponible, la devuelve; de lo contrario, devuelve la posición inicial.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+En organismos
+
+Inicializa un organismo con una posición en la matriz, niveles de vida, energía y velocidad.
+
+el metodo moverse ,mueve el organismo en una dirección dada en la matriz espacial, siempre y cuando la nueva posición esté dentro de los límites de la matriz.
+
+el metodo reproducirse genera un nuevo organismo en una posición disponible cercana. Puede recibir atributos adicionales para la creación del nuevo organismo.
+
+El metodo morir Elimina el organismo de la matriz espacial.
+
+El metodo interaccion con el entorno aumenta la energía del organismo en función del factor abiótico del ambiente.
+
+El ultimo metodo verifica si se esta vivo o no.
+
+    --------------------------------
+
+    Clase Animal (hereda de Organismo):
+
+        Inicializa un animal con características específicas como especie, dieta y rol trófico. Asigna un sprite a partir de una imagen según la especie.
+
+        El metodo cazar reduce la vida de una presa y aumenta la energía del depredador.
+
+        comer_planta(self, planta, matriz_espacial): Consume una planta y aumenta la energía del animal.
+
+        El metodo calcular distancia, calcula la distancia manhattan entre dos posiciones.
+
+        El metodo reproducirse reproduce un nuevo animal si las condiciones son adecuadas.
+
+        El metodo para buscar recurso mueve al animal hacia la planta más cercana.
+
+        El medoto tomar decisiones oma decisiones sobre buscar recursos o reproducirse según su estado de energía.
+
+        Tomar decisiones avanzadas, toma decisiones avanzadas basadas en la presencia de otros organismos en el ecosistema
+        
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
