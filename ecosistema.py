@@ -1,10 +1,13 @@
 from organismos import Animal, Planta
+from ambiente import Ambiente
+
 class Ecosistema:
-    def __init__(self, matriz_espacial, motor_eventos):
+    def __init__(self, matriz_espacial, motor_eventos, ambiente):
         self.matriz_espacial = matriz_espacial
         self.organismos = []
         self.motor_eventos = motor_eventos
-
+        self.ambiente = ambiente
+        
     def ciclo_vida(self):
         for organismo in self.organismos:
             organismo.mover() 
