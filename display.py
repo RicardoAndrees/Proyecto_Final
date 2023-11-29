@@ -37,8 +37,8 @@ class InterfazGrafica:
         ]
         self.font = pygame.font.Font(None, 36) 
 
-        self.num_celdas_x = 30
-        self.num_celdas_y = 30
+        self.num_celdas_x = 15
+        self.num_celdas_y = 15
         self.ancho_celda = self.screen_size[0] // self.num_celdas_x
         self.alto_celda = self.screen_size[1] // self.num_celdas_y
 

@@ -9,17 +9,18 @@ import pygame
 def main():
     pygame.init()
 
-    tiburon = Animal(posicion=[1, 11], vida=100, energia=50, velocidad=1, especie="Tiburón", dieta="Peces", imagen_path="tiburon.png")
-    pez = Animal(posicion=[5, 13], vida=80, energia=40, velocidad=1, especie="Pez", dieta="Algas", imagen_path="pez.png")
+    tiburon = Animal(posicion=[2, 10], vida=100, energia=50, velocidad=1, especie="Tiburón", dieta="Peces", imagen_path="tiburon.png")
+    pez = Animal(posicion=[5, 11], vida=80, energia=40, velocidad=1, especie="Pez", dieta="Algas", imagen_path="pez.png")
     
     matriz_celda_size = (50, 50) 
-    girasol = Planta(posicion=[3, 5], vida=50, energia=30, imagen_path="girasol.png", matriz_celda_size=matriz_celda_size)
+    girasol = Planta(posicion=[1, 1], vida=50, energia=30, imagen_path="girasol.png", matriz_celda_size=matriz_celda_size)
+    arbolito = Planta(posicion=[3, 7], vida=50, energia=30, imagen_path="arbolito.png", matriz_celda_size=matriz_celda_size)
+    lechuga = Planta(posicion=[6, 4], vida=50, energia=30, imagen_path="lechuga.png", matriz_celda_size=matriz_celda_size)
+    abedul = Planta(posicion=[8, 8], vida=50, energia=30, imagen_path="abedul.png", matriz_celda_size=matriz_celda_size)
+    mariajuana = Planta(posicion=[10, 2], vida=50, energia=30, imagen_path="mariajuana.png", matriz_celda_size=matriz_celda_size)
 
-    arbolito = Planta(posicion=[8, 10], vida=60, energia=40, imagen_path="arbolito.png", matriz_celda_size=matriz_celda_size)
+    organismos = [tiburon, pez, girasol, arbolito, lechuga, abedul, mariajuana]
 
-
-
-    organismos = [tiburon, pez, girasol, arbolito]
     matriz_celdas = [[None for _ in range(15)] for _ in range(15)]  
     
     num_filas = 10
