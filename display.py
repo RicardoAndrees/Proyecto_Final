@@ -1,4 +1,3 @@
-# display.py
 import pygame
 import sys
 import random
@@ -51,13 +50,12 @@ class InterfazGrafica:
         self.indice_pez = 9
         self.indice_ciervo = 10
 
-        self.rango_x_general = (9, 15)  # Define un rango general para el eje x
-        self.rango_y_general = (0, self.num_celdas_y - 1)  # Define un rango general para el eje y
+        self.rango_x_general = (9, 15)  
+        self.rango_y_general = (0, self.num_celdas_y - 1)  
 
-        # Modifica la inicialización de los organismos
         self.organismos = [
             Animal(posicion=[1, 11], vida=100, energia=50, velocidad=1, especie="Tiburón", dieta="Peces", imagen_path="tiburon.png"),
-            # Agrega más organismos según sea necesario
+
         ]
 
 
@@ -73,7 +71,7 @@ class InterfazGrafica:
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
 
-        self.sprites_posiciones = [None] * self.num_sprites  # Mueve esta línea aquí
+        self.sprites_posiciones = [None] * self.num_sprites 
 
 
         self.sprites_direcciones = [None] * self.num_sprites
@@ -100,7 +98,6 @@ class InterfazGrafica:
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
 
-            # Comprobación para evitar el error 'NoneType' object is not subscriptable
             posicion = self.sprites_posiciones[i]
             if posicion is not None and (
                 rango_x_sprite[0] <= posicion[0] <= rango_x_sprite[1] and
@@ -108,7 +105,6 @@ class InterfazGrafica:
             ):
                 self.actualizar_posicion_sprite(i, direccion, rango_x_sprite, rango_y_sprite)
 
-                # Comprobación adicional para evitar el error 'NoneType' object is not subscriptable
                 posicion = self.sprites_posiciones[i]
                 if posicion is not None and not (rango_x_sprite[0] <= posicion[0] <= rango_x_sprite[1] and
                         rango_y_sprite[0] <= posicion[1] <= rango_y_sprite[1]):
@@ -147,56 +143,47 @@ class InterfazGrafica:
 
             self.screen.blit(self.sprites[i], (x, y))
 
-        # Dibuja los organismos
         for organismo in self.organismos:
             organismo.dibujar(self.screen, self.ancho_celda, self.alto_celda)
 
     def mover_organismos_aleatoriamente(self):
-        self.clock.tick(1)  # Ajusta la velocidad de movimiento según sea necesario
+        self.clock.tick(10)  
         tiempo_actual = time.time()
 
         if tiempo_actual - self.tiempo_aleatorio > 1:
             for organismo in self.organismos:
-                organismo.mover_aleatoriamente()  # Modifica esto según la lógica específica del organismo
+                organismo.mover_aleatoriamente()  
             self.tiempo_aleatorio = tiempo_actual
 
         for i in range(self.num_sprites):
             direccion = self.sprites_direcciones[i]
 
-            # Verificación para evitar el error 'NoneType' object has no attribute 'copy'
             if self.sprites_posiciones[i] is not None:
                 nueva_posicion = self.sprites_posiciones[i].copy()
 
                 if i in [self.indice_tiburon, self.indice_pez]:
-                    # Restricciones específicas para el tiburón y el pez
                     nueva_posicion[0] += random.choice([-1, 0, 1])
                     nueva_posicion[1] += random.choice([-1, 0, 1])
 
                     nueva_posicion[0] = max(self.rango_x_tiburon[0], min(self.rango_x_tiburon[1], nueva_posicion[0]))
                     nueva_posicion[1] = max(self.rango_y_tiburon[0], min(self.rango_y_tiburon[1], nueva_posicion[1]))
                 else:
-                    # Restricciones para otros animales
                     nueva_posicion[0] += random.choice([-1, 0, 1])
                     nueva_posicion[1] += random.choice([-1, 0, 1])
 
-                    # Restricciones para no pasar de la línea 10
                     nueva_posicion[1] = min(10, nueva_posicion[1])
 
-                    # Restricciones para moverse solo desde la columna 9 a la 15
                     nueva_posicion[0] = max(9, min(15, nueva_posicion[0]))
 
-                # Asegurarse de que la nueva posición esté dentro del rango
                 nueva_posicion[0] = nueva_posicion[0] % self.num_celdas_x
                 nueva_posicion[1] = nueva_posicion[1] % self.num_celdas_y
 
                 if not self.hay_sprite_en_celda(nueva_posicion):
-                    # Verificación para evitar el error 'NoneType' object has no attribute 'copy'
                     if self.sprites_posiciones[i] is not None:
                         self.matriz_celdas[self.sprites_posiciones[i][1]][self.sprites_posiciones[i][0]] = None
                     self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = i
                     self.sprites_posiciones[i] = nueva_posicion
             else:
-                # Asignar una posición predeterminada en caso de que sea None
                 nueva_posicion = [0, 0]
                 self.matriz_celdas[nueva_posicion[1]][nueva_posicion[0]] = i
                 self.sprites_posiciones[i] = nueva_posicion
@@ -206,8 +193,7 @@ class InterfazGrafica:
         if self.sprites_posiciones[indice] is not None:
             nueva_posicion = self.sprites_posiciones[indice].copy()
         else:
-            # Decide qué hacer si la posición es None, por ejemplo, asignar una posición predeterminada.
-            nueva_posicion = [0, 0]  # Cambia esto según tus necesidades.
+            nueva_posicion = [0, 0]  
 
         if direccion == pygame.K_LEFT:
             nueva_posicion[0] -= 1
@@ -218,7 +204,6 @@ class InterfazGrafica:
         elif direccion == pygame.K_DOWN:
             nueva_posicion[1] += 1
 
-        # Aplicar restricciones de rango
         nueva_posicion[0] = max(rango_x_sprite[0], min(rango_x_sprite[1], nueva_posicion[0]))
         nueva_posicion[1] = max(rango_y_sprite[0], min(rango_y_sprite[1], nueva_posicion[1]))
 
