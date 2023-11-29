@@ -1,15 +1,35 @@
 import pygame
-import sys
 from display import InterfazGrafica
-from matriz_espacial import MatrizEspacial
-from organismos import Organismo, Animal, Planta
+from organismos import Animal, Planta
+from ambiente import Ambiente
 
-if __name__ == "__main__":
+def main():
     pygame.init()
 
-    matriz_espacial = MatrizEspacial(filas=15, columnas=15)
+    tiburon = Animal(posicion=[1, 11], vida=100, energia=50, velocidad=1, especie="Tiburón", dieta="Peces", imagen_path="tiburon.png")
+    pez = Animal(posicion=[5, 13], vida=80, energia=40, velocidad=1, especie="Pez", dieta="Algas", imagen_path="pez.png")
+    planta1 = Planta(posicion=[1, 5], vida=10, energia=10, velocidad=0, imagen_path="brote.PNG")
+
+    organismos = [tiburon, pez]
+    matriz_celdas = [[None for _ in range(15)] for _ in range(15)]  
     
-    interfaz = InterfazGrafica(matriz_espacial)
+    matriz_celdas = [[None for _ in range(15)] for _ in range(15)] 
+    ambiente = Ambiente(matriz_celdas, organismos)
+    interfaz = InterfazGrafica()
+    interfaz.organismos = organismos
     interfaz.ejecutar_interfaz()
 
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
+        ambiente.ejecutar_ciclo() 
+        interfaz.mover_sprites_aleatoriamente()
+        interfaz.mover_organismos_aleatoriamente()
+        interfaz.dibujar_ecosistema()
+        pygame.display.flip()
+
+if __name__ == "__main__":
+    main()
