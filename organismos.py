@@ -61,20 +61,17 @@ class Animal(Organismo):
 
 
     def cazar(self, presa):
-        # Lógica para la caza de otra entidad
         if isinstance(presa, Animal) and presa != self:
-            # El animal caza solo si la presa es un animal y no es él mismo
             probabilidad_caza = random.uniform(0, 1)
-            if probabilidad_caza > 0.5:  # 50% de probabilidad de éxito en la caza
-                presa.morir()  # La presa muere
-                self.energia += 10  # El depredador gana energía por cazar
+            if probabilidad_caza > 0.5:  
+                presa.morir()  
+                self.energia += 10  
 
     def reproducir(self, pareja):
-        # Lógica para la reproducción con otro animal
+        
         if isinstance(pareja, Animal) and pareja.especie == self.especie and pareja != self:
             probabilidad_reproduccion = random.uniform(0, 1)
-            if probabilidad_reproduccion > 0.7:  # 70% de probabilidad de reproducción exitosa
-                # Creamos un nuevo animal con características promedio de ambos padres
+            if probabilidad_reproduccion > 0.7:  
                 nueva_vida = (self.vida + pareja.vida) // 2
                 nueva_energia = (self.energia + pareja.energia) // 2
                 nueva_velocidad = (self.velocidad + pareja.velocidad) // 2
@@ -83,10 +80,9 @@ class Animal(Organismo):
                 nuevo_animal = Animal(nueva_posicion, nueva_vida, nueva_energia, nueva_velocidad, self.especie, self.dieta)
                 return nuevo_animal
 
-        return None  # No se reproduce si la pareja no es del mismo tipo o si es él mismo
+        return None  
 
     def morir(self):
-        # Lógica para la muerte del animal
         self.vida = 0
         self.energia = 0
 

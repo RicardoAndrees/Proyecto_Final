@@ -30,8 +30,8 @@ class InterfazGrafica:
 
         self.font = pygame.font.Font(None, 36) 
 
-        self.num_celdas_x = 15
-        self.num_celdas_y = 15
+        self.num_celdas_x = 30
+        self.num_celdas_y = 30
         self.ancho_celda = self.screen_size[0] // self.num_celdas_x
         self.alto_celda = self.screen_size[1] // self.num_celdas_y
 
@@ -134,7 +134,7 @@ class InterfazGrafica:
                 numero_celda = str(j * self.num_celdas_x + i + 1)
                 texto_surface = self.font.render(numero_celda, True, (255, 255, 255))
                 texto_rect = texto_surface.get_rect(center=(x + self.ancho_celda // 2, y + self.alto_celda // 2))
-                self.screen.blit(texto_surface, texto_rect)
+                #self.screen.blit(texto_surface, texto_rect)
 
         for i in range(self.num_sprites):
             sprite_width, sprite_height = self.sprites[i].get_size()
@@ -209,6 +209,9 @@ class InterfazGrafica:
 
         return nueva_posicion
 
+    def panel_de_control(self):
+        # Implementa tu lógica para el panel de control aquí
+        pass
 
     def ejecutar_interfaz(self):
         while True:
