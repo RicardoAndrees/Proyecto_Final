@@ -1,3 +1,4 @@
+from organismos import Animal, Planta
 class Ecosistema:
     def __init__(self, matriz_espacial, motor_eventos):
         self.matriz_espacial = matriz_espacial
