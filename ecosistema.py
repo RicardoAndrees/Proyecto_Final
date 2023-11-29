@@ -1,13 +1,15 @@
+# ecosistema.py
+from registro_eventos import RegistroEventos, HerramientasAnalisis
 from organismos import Animal, Planta
-from matriz_espacial import MatrizEspacial
-from motor_eventos import MotorEventos
-
 class Ecosistema:
     def __init__(self, matriz_espacial, motor_eventos, ambiente):
         self.matriz_espacial = matriz_espacial
         self.organismos = []
         self.motor_eventos = motor_eventos
         self.ambiente = ambiente
+
+        # Inicializar el registro de eventos
+        self.registro_eventos = RegistroEventos()
 
     def ciclo_vida(self):
         self.motor_eventos.realizar_ciclo()
@@ -24,6 +26,9 @@ class Ecosistema:
                 nuevo_organismo = organismo.reproducir(pareja)
                 if nuevo_organismo:
                     self.organismos.append(nuevo_organismo)
+
+        # Agregar eventos al registro
+        self.registro_eventos.agregar_evento("Ciclo de vida completado.")
 
     def encontrar_pareja(self, organismo):
         for otro_organismo in self.organismos:
@@ -45,6 +50,9 @@ class Ecosistema:
                 if presa:
                     organismo.cazar(presa)
 
+        # Agregar eventos al registro
+        self.registro_eventos.agregar_evento("Cadena alimenticia actualizada.")
+
     def encontrar_presa(self, depredador):
         for organismo in self.organismos:
             if (
@@ -55,3 +63,10 @@ class Ecosistema:
             ):
                 return organismo
         return None
+
+    def guardar_registro(self):
+        # Guardar el registro en un archivo
+        self.registro_eventos.guardar_registro("registro_ecosistema.txt")
+
+# En algún punto donde quieras analizar el registro
+HerramientasAnalisis.analizar_registro("registro_ecosistema.txt")

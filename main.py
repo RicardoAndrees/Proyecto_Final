@@ -1,5 +1,5 @@
 from ecosistema import Ecosistema
-from motor_eventos import MotorEventos
+from registro_eventos import RegistroEventos
 from matriz_espacial import MatrizEspacial
 from ambiente import Ambiente
 from organismos import Animal, Planta
@@ -28,9 +28,9 @@ def main():
     intervalo_ciclico = 1
         
     matriz_espacial = MatrizEspacial(num_filas, num_columnas)
-    motor_eventos = MotorEventos(intervalo_ciclico)
+    registro_eventos = RegistroEventos()
     ambiente = Ambiente(matriz_celdas, organismos)
-    mi_ecosistema = Ecosistema(matriz_espacial, motor_eventos, ambiente)
+    mi_ecosistema = Ecosistema(matriz_espacial, registro_eventos, ambiente)
 
     
     interfaz = InterfazGrafica()

@@ -68,7 +68,11 @@ class InterfazGrafica:
 
         self.rango_x_tiburon = (1, 5) 
         self.rango_y_tiburon = (11, 14) 
-
+        self.animales_disponibles = [
+            {"especie": "Tiburón", "dieta": "Peces", "imagen_path": "tiburon.png", "rango_x": (1, 5), "rango_y": (11, 14)},
+            {"especie": "León", "dieta": "Carnívoro", "imagen_path": "leon.png", "rango_x": (0, 14), "rango_y": (0, 14)},
+            # Agrega más animales según sea necesario
+        ]
         for i in range(self.num_sprites):
             sprite = self.sprites[i]
             rango_x_sprite = (0, self.num_celdas_x - 1)
@@ -216,8 +220,19 @@ class InterfazGrafica:
 
         return nueva_posicion
 
-    def panel_de_control(self):
-        pass
+    def agregar_animal_aleatorio(self):
+        animal_data = random.choice(self.animales_disponibles)
+        nuevo_animal = Animal(
+            posicion=[random.randint(*animal_data["rango_x"]), random.randint(*animal_data["rango_y"])],
+            vida=100, energia=50, velocidad=1, especie=animal_data["especie"],
+            dieta=animal_data["dieta"], imagen_path=animal_data["imagen_path"]
+        )
+        self.animales_agregados.append(nuevo_animal)
+
+    def manejar_eventos_teclado(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                self.agregar_animal_aleatorio()
 
     def ejecutar_interfaz(self):
         while True:
