@@ -57,7 +57,7 @@ class InterfazGrafica:
         self.sprites_posiciones[self.indice_tiburon] = [1, 11] 
         self.rango_x_tiburon = (1, 5) 
         self.rango_y_tiburon = (11, 14) 
-        self.rango_x_pez = (2, 6)
+        self.rango_x_pez = (1, 5)
         self.rango_y_pez = (11, 14)
 
         
@@ -88,24 +88,31 @@ class InterfazGrafica:
         tiempo_actual = time.time()
 
         if tiempo_actual - self.tiempo_aleatorio > 1:
-            self.sprites_direcciones = [self.generar_direccion_aleatoria() for _ in range(self.num_sprites)]
             self.tiempo_aleatorio = tiempo_actual
 
         for i in range(self.num_sprites):
-            direccion = self.sprites_direcciones[i]
             rango_x_sprite = (0, self.num_celdas_x - 1)
             rango_y_sprite = (0, self.num_celdas_y - 1)
 
-            if i == self.indice_tiburon or i == self.indice_pez:
+            if i == self.indice_tiburon:
                 rango_x_sprite = self.rango_x_tiburon
                 rango_y_sprite = self.rango_y_tiburon
+            elif i == self.indice_pez:
+                rango_x_sprite = self.rango_x_pez
+                rango_y_sprite = self.rango_y_pez
             elif i in [self.indice_lagartija, self.indice_leon, self.indice_tigre, self.indice_elefante, self.indice_ciervo, self.indice_conejo]:
                 rango_x_sprite = self.rango_x_leon
                 rango_y_sprite = self.rango_y_leon
 
-            self.actualizar_posicion_sprite(i, direccion, rango_x_sprite, rango_y_sprite)
-
-
+            if i not in [self.indice_tiburon, self.indice_pez]:
+                direccion = self.generar_direccion_aleatoria()
+                self.actualizar_posicion_sprite(i, direccion, rango_x_sprite, rango_y_sprite)
+            else:
+                # No mover los otros sprites en las celdas del pez y el tiburón
+                if i not in [self.indice_tiburon, self.indice_pez]:
+                    direccion = self.generar_direccion_aleatoria()
+                    self.actualizar_posicion_sprite(i, direccion, rango_x_sprite, rango_y_sprite)
+                
             posicion = self.sprites_posiciones[i]
 
             if not (rango_x_sprite[0] <= posicion[0] <= rango_x_sprite[1] and
